@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Loan Manager</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="container">
+    <h1>Loan Manager</h1>
+
+    <form id="loanForm">
+        <label>Loan Name / Description:</label>
+        <input type="text" id="loanName" placeholder="e.g. Home Loan" required />
+
+        <label>Loan Amount (₹):</label>
+        <input type="number" id="loanAmount" required />
+
+        <label>Monthly EMI (₹):</label>
+        <input type="number" id="emiAmount" required />
+
+        <label>Total Duration (Months):</label>
+        <input type="number" id="totalDuration" required />
+
+        <label>Months Paid:</label>
+        <input type="number" id="monthsPaid" required />
+
+        <button type="submit">Add / Update Loan</button>
+    </form>
+
+    <h2>Your Loans</h2>
+    <div id="loanList"></div>
+</div>
+
+<script>
+const loanForm = document.getElementById('loanForm');
+const loanListDiv = document.getElementById('loanList');
+
+let loans = JSON.parse(localStorage.getItem('loans')) || [];
+
+function saveLoans() {
+    localStorage.setItem('loans', JSON.stringify(loans));
+}
+
+function renderLoans() {
+    if (loans.length === 0) {
+        loanListDiv.innerHTML = "<p>No loans added yet.</p>";
+        return;
+    }
+
+    loanListDiv.innerHTML = loans.map((loan, index) => {
+        const remainingMonths = loan.totalDuration - loan.monthsPaid;
+        const remainingAmount = remainingMonths * loan.emiAmount;
+        return `
+        <div class="loanItem">
+            <h3>${loan.loanName}</h3>
+            <p><b>Loan Amount:</b> ₹${loan.loanAmount.toFixed(2)}</p>
+            <p><b>Monthly EMI:</b> ₹${loan.emiAmount.toFixed(2)}</p>
+            <p><b>Total Duration:</b> ${loan.totalDuration} months</p>
+            <p><b>Months Paid:</b> ${loan.monthsPaid}</p>
+            <p><b>Remaining Months:</b> ${remainingMonths}</p>
+            <p><b>Remaining Amount:</b> ₹${remainingAmount.toFixed(2)}</p>
+            <button onclick="deleteLoan(${index})">Delete</button>
+        </div>
+        `;
+    }).join('');
+}
+
+function deleteLoan(index) {
+    if(confirm("Delete this loan?")) {
+        loans.splice(index, 1);
+        saveLoans();
+        renderLoans();
+    }
+}
+
+loanForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const loanName = document.getElementById('loanName').value.trim();
+    const loanAmount = parseFloat(document.getElementById('loanAmount').value);
+    const emiAmount = parseFloat(document.getElementById('emiAmount').value);
+    const totalDuration = parseInt(document.getElementById('totalDuration').value);
+    const monthsPaid = parseInt(document.getElementById('monthsPaid').value);
+
+    if(!loanName || loanAmount <= 0 || emiAmount <= 0 || totalDuration <= 0 || monthsPaid < 0 || monthsPaid > totalDuration) {
+        alert("Please enter valid data.");
+        return;
+    }
+
+    // Add loan
+    loans.push({loanName, loanAmount, emiAmount, totalDuration, monthsPaid});
+    saveLoans();
+    renderLoans();
+
+    loanForm.reset();
+});
+
+renderLoans();
+</script>
+</body>
+</html>

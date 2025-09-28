@@ -1,0 +1,88 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f1f5f9;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 600px;
+    margin: 40px auto;
+    background: white;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+}
+
+h1, h2 {
+    text-align: center;
+    color: #333;
+}
+
+form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+form label {
+    flex: 1 0 100%;
+    font-weight: 600;
+    color: #222;
+}
+
+form input {
+    flex: 1 0 48%;
+    padding: 10px;
+    border: 1.5px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+form button {
+    flex: 1 0 100%;
+    padding: 12px;
+    background-color: #2e86de;
+    color: white;
+    border: none;
+    border-radius: 7px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+form button:hover {
+    background-color: #1b4f72;
+}
+
+.loanItem {
+    border: 1.5px solid #2e86de;
+    border-radius: 8px;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    background-color: #eaf1fc;
+}
+
+.loanItem h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #1b4f72;
+}
+
+.loanItem p {
+    margin: 6px 0;
+}
+
+.loanItem button {
+    background-color: #eb4d4b;
+    padding: 8px 16px;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.loanItem button:hover {
+    background-color: #c0392b;
+}
