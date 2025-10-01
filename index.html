@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Login | Loan Manager</title>
+    <title>Login | Loan & Salary Manager</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&display=swap" rel="stylesheet">
@@ -11,9 +12,15 @@
             --background-color: #121212;
             --accent-color: #EDFF00;
             --text-color: #F5F5F5;
-            --border-color: #444444;
-            --input-bg-color: #1E1E1E;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --input-bg-color: rgba(30, 30, 30, 0.5);
+            --glass-bg-color: rgba(26, 26, 26, 0.5);
         }
+
+        * {
+            cursor: none; /* Hide default cursor for all elements */
+        }
+
         body {
             font-family: 'Manrope', sans-serif;
             background: var(--background-color);
@@ -21,28 +28,79 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
+            padding: 1rem;
+            box-sizing: border-box;
+            overflow: hidden; /* Hide scrollbars from gradient animation */
+            
+            /* Animated Gradient Background */
+            background-image: linear-gradient(135deg, #1a237e 0%, #3949ab 25%, #121212 50%, #880e4f 75%, #4a148c 100%);
+            background-size: 400% 400%;
+            animation: gradient-animation 20s ease infinite;
         }
+
+        @keyframes gradient-animation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* Custom Cursor Styles */
+        .cursor-dot, .cursor-outline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-color);
+        }
+        .cursor-outline {
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--accent-color);
+            transition: transform 0.2s ease-out, width 0.3s, height 0.3s, opacity 0.3s;
+        }
+        .cursor-outline.grow {
+            transform: scale(1.5);
+            opacity: 0.5;
+        }
+
         .container {
-            background: transparent;
             padding: 2.5rem;
-            border: 1px solid var(--border-color);
             width: 380px;
+            max-width: 100%;
+            
+            /* Liquid Glass Effect */
+            background: var(--glass-bg-color);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
+
         h2 {
             text-align: center;
             color: var(--accent-color);
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 1px;
+            margin-top: 0;
             margin-bottom: 2rem;
         }
+
         form {
             display: flex;
             flex-direction: column;
             gap: 1.2rem;
         }
+
         input {
             padding: 0.8rem 1rem;
             font-size: 1rem;
@@ -53,42 +111,61 @@
             border-radius: 0;
             transition: border-color 0.3s;
         }
+
         input:focus {
             outline: none;
             border-color: var(--accent-color);
         }
+
         button {
             background: transparent;
             color: var(--accent-color);
             border: 1px solid var(--accent-color);
             padding: 0.8rem;
-            cursor: pointer;
+            cursor: none; /* Important for custom cursor */
             font-size: 1rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             transition: background-color 0.3s, color 0.3s;
         }
+
         button:hover {
             background: var(--accent-color);
             color: var(--background-color);
         }
+
         .switch-link {
             text-align: center;
             margin-top: 1.5rem;
             font-size: 0.9rem;
         }
+
         .switch-link a {
             color: var(--accent-color);
             text-decoration: none;
             font-weight: 700;
         }
+
         .switch-link a:hover {
             text-decoration: underline;
+        }
+
+        /* Media query for mobile */
+        @media (max-width: 480px) {
+            .container {
+                padding: 2rem 1.5rem;
+            }
+            h2 {
+                font-size: 1.2rem;
+            }
         }
     </style>
 </head>
 <body>
+
+<div class="cursor-dot"></div>
+<div class="cursor-outline"></div>
 
 <div class="container">
     <form id="login-form">
@@ -113,37 +190,87 @@
 </div>
 
 <script>
-    // The JavaScript for toggling forms and handling login/registration remains the same.
+    // --- Custom Cursor Script ---
+    const cursorDot = document.querySelector('.cursor-dot');
+    const cursorOutline = document.querySelector('.cursor-outline');
+    
+    window.addEventListener('mousemove', function (e) {
+        const posX = e.clientX;
+        const posY = e.clientY;
+        
+        cursorDot.style.left = `${posX}px`;
+        cursorDot.style.top = `${posY}px`;
+        
+        cursorOutline.animate({
+            left: `${posX}px`,
+            top: `${posY}px`
+        }, { duration: 500, fill: "forwards" });
+    });
+    
+    document.addEventListener('mouseover', e => {
+        if (e.target.closest('a, button')) {
+            cursorOutline.classList.add('grow');
+        }
+    });
+    
+    document.addEventListener('mouseout', e => {
+        if (e.target.closest('a, button')) {
+            cursorOutline.classList.remove('grow');
+        }
+    });
+
+    // --- Login & Registration Script ---
     document.addEventListener('DOMContentLoaded', () => {
         const loginForm = document.getElementById('login-form');
         const registerForm = document.getElementById('register-form');
         const showRegisterLink = document.getElementById('show-register');
         const showLoginLink = document.getElementById('show-login');
-        showRegisterLink.addEventListener('click', (e) => { e.preventDefault(); loginForm.style.display = 'none'; registerForm.style.display = 'block'; });
-        showLoginLink.addEventListener('click', (e) => { e.preventDefault(); loginForm.style.display = 'block'; registerForm.style.display = 'none'; });
+
+        // Event listener to switch to the registration form
+        showRegisterLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            loginForm.style.display = 'none';
+            registerForm.style.display = 'block';
+        });
+
+        // Event listener to switch back to the login form
+        showLoginLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            loginForm.style.display = 'block';
+            registerForm.style.display = 'none';
+        });
+
+        // Handle the registration form submission
         registerForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const username = document.getElementById('register-username').value;
             const email = document.getElementById('register-email').value;
             const password = document.getElementById('register-password').value;
+            
             const users = JSON.parse(localStorage.getItem('users')) || [];
+            
             if (users.some(user => user.username === username)) {
                 alert('Username already exists!');
             } else {
                 users.push({ username, email, password });
                 localStorage.setItem('users', JSON.stringify(users));
                 alert('Registration successful! Please log in.');
-                showLoginLink.click();
+                showLoginLink.click(); // Switch to login form
                 registerForm.reset();
             }
         });
+
+        // Handle the login form submission
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const username = document.getElementById('login-username').value;
             const password = document.getElementById('login-password').value;
+            
             const users = JSON.parse(localStorage.getItem('users')) || [];
             const validUser = users.find(user => user.username === username && user.password === password);
+            
             if (validUser) {
+                // If login is successful, save user to session and redirect
                 sessionStorage.setItem('loggedInUser', username);
                 window.location.href = 'manager.html';
             } else {
